@@ -1,0 +1,34 @@
+# Copy to policy.yaml and edit.  See voucher_service/policy.py for the semantics.
+
+# Pinned into every voucher as `operator`, and so into every charter it produces.
+operator: did:web:operator.example
+
+# The registry these vouchers are for (the voucher audience).
+registry_did: did:web:registry.cpricedomain.net
+
+# How long an approved voucher stays usable.  The agent collects it and enrols
+# within this window; it is single-use at the registry either way.
+voucher_ttl_seconds: 600
+
+# The most this operator will ever vouch for.  Requests outside it are refused
+# at submission.  `voucherctl jwks` writes this as the key's ceiling at the
+# registry, so the registry enforces the same limit independently.
+max:
+  capabilities:
+    - observe
+    - publish
+    - publish:dev.watershed-agent.observation
+  scopes:
+    - us-ca-napa
+    - us-ca-sonoma
+
+# What may be approved without a human.  First enrollment never is: an agent
+# with no charter has nothing yet that a policy could check.
+auto_approve:
+  amend:
+    # An agent that already holds a charter may add these unattended.  Anything
+    # already in its charter is also allowed (renewing what it has).
+    capabilities:
+      - publish:dev.watershed-agent.observation
+    scopes:
+      - us-ca-sonoma
